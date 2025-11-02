@@ -61,15 +61,14 @@ Generated Context-Aware First-Aid Instructions
 ```bash
 wound_detection_app/
 │
+├── assets/
+│ └── ui.png                        # App demo screenshot / banner
+│
 ├── app/
 │ └── app.py                        # Streamlit web UI
 │
-├── dataset/
-│ └── raw/wound-yolo/               # Roboflow-exported YOLO dataset
-│ ├── train/
-│ ├── valid/
-│ ├── test/
-│ └── data.yaml
+├── datasets/
+│ └── data.yaml                     # YOLO dataset configuration
 │
 ├── models/
 │ └── wound_yolo_seg_final.pt       # Trained YOLO segmentation model
@@ -82,8 +81,11 @@ wound_detection_app/
 │ │ ├── 02_balance_and_augment.py   # Class balancing + augmentations
 │ │ ├── 03_train_yolov8.py          # Training pipeline
 │ │ └── yolo_infer.py               # Detection + wound_unknown logic
-│ └── llm/
-│ └── first_aid.py                  # LLM-based first-aid generation
+│ ├── llm/
+│ │ └── first_aid.py                # LLM-based first-aid generation
+│ └── xai/
+│   ├── gradcam.py                  # Grad-CAM visualization
+│   └── bbox_xai.py                 # optional bounding box visualization
 │
 ├── xai_results/                    # Grad-CAM or heatmap outputs
 ├── report/                         # For course documentation
@@ -99,7 +101,7 @@ wound_detection_app/
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/wound_detection_app.git
+git clone https://github.com/sum1tbarua/wound_detection_app.git
 cd wound_detection_app
 ```
 
@@ -219,11 +221,11 @@ In such cases, the LLM engages the user for clarification — a deliberate human
 
 ## 👨‍💻 Author(s)
 
- - Sumit Barua
+ - Sumit Barua,
  Master’s Student, Department of Computer Science, 
  Western Michigan University, 📧 sumit.barua@wmich.edu
 
- - Ruth Bahre
+ - Ruth Bahre,
  Master’s Student, Department of Electrical and Computer Engineering, 
  Western Michigan University, 📧 ruth.bahre@wmich.edu
 

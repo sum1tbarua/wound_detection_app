@@ -47,9 +47,8 @@ models/*_tmp/
 
 
 # --- 📦 Datasets (Large / Local Only) ---
-datasets/
-!datasets/data.yaml   # <-- ✅ keep this file tracked
-
+datasets/*
+!datasets/raw/wound-yolo/data.yaml   # <-- ✅ keep this file tracked
 *.zip
 *.tar
 *.tar.gz
