@@ -209,6 +209,18 @@ Under unusual lighting or viewing angles, the model may classify an image as wou
 In such cases, the LLM engages the user for clarification — a deliberate human-in-the-loop design for safety and reliability.
 
 ---
+
+## Test with Provided Samples
+Use any image from the **samples/** directory to verify the workflow.
+You’ll see:
+
+1. Detection overlay
+
+2. Grad-CAM explanation
+
+3. Generated first-aid guidance
+
+---
 ## Future Directions
 
 🧬 Integrate infection-risk classification
