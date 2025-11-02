@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 10
+names: ['arm_burn', 'arm_cut', 'hand_burn', 'hand_cut', 'healthy_arm', 'healthy_hand', 'healthy_leg', 'leg_burn', 'leg_cut', 'wound_unknown']
+
+roboflow:
+  workspace: sumitwork
+  project: wound-detection-segmentation-v1xl5
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/sumitwork/wound-detection-segmentation-v1xl5/dataset/4
