@@ -1,0 +1,89 @@
+# =========================================
+# 🩹 Hybrid AI: Wound Detection + First-Aid App
+# =========================================
+
+# --- 🧠 Environment & Secrets ---
+.venv/
+.env
+.env.*
+*.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- 🧩 Development / Editor Config ---
+.vscode/
+.idea/
+*.code-workspace
+.DS_Store
+Thumbs.db
+
+# --- 🪵 Logs & Caches ---
+*.log
+logs/
+wandb/
+runs/
+.cache/
+__pycache__/
+__logs__/
+__outputs__/
+
+# --- 🧠 Model Weights / Large Files ---
+# Keep final YOLOv8 segmentation model for reproducibility
+!models/wound_yolo_seg_final.pt    # ✅ keep this file tracked
+
+models/*.onnx
+models/*.pth
+models/*.ckpt
+models/*.bin
+models/*.engine
+models/*.tflite
+models/*.trt
+models/*_tmp/
+*.npy
+*.npz
+
+
+
+# --- 📦 Datasets (Large / Local Only) ---
+datasets/
+!datasets/data.yaml   # <-- ✅ keep this file tracked
+
+*.zip
+*.tar
+*.tar.gz
+
+
+# --- 🧪 Temporary & Generated Files ---
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*.out
+
+# --- 🌐 Streamlit & Python Bytecode ---
+.streamlit/
+*.py[cod]
+*$py.class
+
+# Streamlit output
+app_outputs/
+
+# --- 🧾 Reports & Explainability Artifacts ---
+report/*.pdf
+report/*.docx
+report/drafts/
+xai_results/*.png
+xai_results/*.jpg
+xai_results/*.npy
+xai_results/*.html
+
+# --- 📓 Jupyter / Checkpoints ---
+*.ipynb_checkpoints/
+
+# --- 🗂️ System Backups / Misc ---
+*.bak
+*.old
+*.orig

@@ -1,0 +1,26 @@
+# ===== Core YOLO / CV =====
+ultralytics>=8.3.0
+opencv-python
+pillow
+numpy
+pyyaml
+pandas
+scipy
+tqdm
+
+# ===== Web UI =====
+streamlit>=1.37.0
+
+# ===== LLM / OpenAI =====
+python-dotenv
+requests
+
+# ===== Augmentation / XAI (optional but used in notebooks) =====
+albumentations>=1.3.1
+matplotlib
+
+# ===== Testing / dev (optional) =====
+# pytest
+# black
+
+
