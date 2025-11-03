@@ -8,16 +8,25 @@ Runtime YOLO inference used by the Streamlit app.
 - also returns a simple XAI placeholder image for the UI
 """
 
+# src/detection/yolo_infer.py
+"""
+Run YOLO on an image, normalize low-confidence / weird labels, and
+(optionally) generate a Grad-CAM image for the top detection.
+
+Returns:
+    detections: list[dict]
+    detection_image_path: Path
+    xai_image_path: Path
+"""
 
 from pathlib import Path
-from ultralytics import YOLO
 import cv2
-import os
-import numpy as np  # 👈 add this
+from ultralytics import YOLO
 
 from src.config import YOLO_MODEL_PATH, DETECTION_CONF_THRESHOLD
+from src.xai.gradcam import make_gradcam  # <-- new util
 
-# classes you actually trained
+# classes actually used in your project
 KNOWN_CLASSES = {
     "healthy_hand",
     "healthy_leg",
@@ -28,117 +37,84 @@ KNOWN_CLASSES = {
     "leg_burn",
     "arm_cut",
     "arm_burn",
+    "wound_unknown",
 }
 
-def normalize_detections(raw_dets):
-    """
-    Normalize and clean YOLO detections.
-    - Converts low-confidence detections to 'wound_unknown'
-    - Prevents obvious cross-body mislabels like leg_* on hand
-    """
+
+def _normalize_detections(raw, ui_conf: float):
     cleaned = []
-    for d in raw_dets:
-        label = d.get("label", "wound_unknown")
-        conf = float(d.get("confidence", 0))
-        bbox = d.get("bbox")
+    for d in raw:
+        label = d["label"]
+        conf = float(d["confidence"])
+        bbox = d["bbox"]
 
-        # rule 1: too low confidence → unknown
-        if conf < 0.25:
+        # 1) UI confidence wins
+        if conf < ui_conf:
             label = "wound_unknown"
 
-        # rule 2: leg_* at low confidence → often misclassified
-        if label.startswith("leg_") and conf < 0.4:
-            label = "wound_unknown"
-
-        # rule 3: sanity — keep only known classes or unknown
+        # 2) sanity
         if label not in KNOWN_CLASSES:
             label = "wound_unknown"
 
-        cleaned.append({
-            "label": label,
-            "confidence": round(conf, 3),
-            "bbox": bbox,
-        })
+        cleaned.append(
+            {
+                "label": label,
+                "confidence": round(conf, 3),
+                "bbox": bbox,
+            }
+        )
     return cleaned
 
 
-def make_xai_overlay(img_path: str, detections: list, save_path: Path):
-    """
-    Lightweight XAI: tint the detected regions red so the UI can
-    show 'where the model looked'. This is NOT full Grad-CAM,
-    but it's good for the prototype.
-    """
-    img = cv2.imread(img_path)
-    if img is None:
-        return
-
-    heat = np.zeros_like(img, dtype=np.uint8)
-
-    for det in detections:
-        bbox = det.get("bbox")
-        if not bbox:
-            continue
-        x1, y1, x2, y2 = map(int, bbox)
-        # red rectangle region
-        heat[y1:y2, x1:x2, :] = (0, 0, 255)
-
-    # blend original + heat
-    overlay = cv2.addWeighted(img, 0.55, heat, 0.45, 0)
-    cv2.imwrite(str(save_path), overlay)
-
-
-def run_detection(image_path: str):
+def run_detection(image_path: str, conf_threshold: float = None):
     model_path = Path(YOLO_MODEL_PATH)
     if not model_path.exists():
         raise FileNotFoundError(f"Model not found at {model_path}")
 
     model = YOLO(str(model_path))
 
-    # 1) run YOLO fairly open so we don’t miss burn-like areas
-    #    (we'll filter ourselves)
+    # if UI did not send anything, fall back to config
+    ui_conf = conf_threshold if conf_threshold is not None else DETECTION_CONF_THRESHOLD
+
+    # run quite open; we will post-filter
     results = model(image_path, conf=0.05, verbose=False)
+    res0 = results[0]
 
     detections = []
-
-    for box in results[0].boxes:
+    for box in res0.boxes:
         cls_id = int(box.cls[0])
         conf = float(box.conf[0])
         x1, y1, x2, y2 = map(float, box.xyxy[0])
-        label = results[0].names[cls_id]
+        label = res0.names[cls_id]
 
-        # if it's below our real threshold → call it unknown
-        if conf < DETECTION_CONF_THRESHOLD:
-            label = "wound_unknown"
+        detections.append(
+            {
+                "label": label,
+                "confidence": conf,
+                "bbox": [x1, y1, x2, y2],
+            }
+        )
 
-        # if the label is not something we trained → call it unknown
-        if label not in KNOWN_CLASSES:
-            label = "wound_unknown"
+    # normalize
+    detections = _normalize_detections(detections, ui_conf)
 
-        detections.append({
-            "label": label,
-            "confidence": round(conf, 3),
-            "bbox": [x1, y1, x2, y2],
-        })
-
-    # 2) if YOLO returned literally nothing → create a default unknown
+    # if nothing at all → synthesize unknown
     if not detections:
-        detections = [{
-            "label": "wound_unknown",
-            "confidence": 0.0,
-            "bbox": None
-        }]
+        detections = [{"label": "wound_unknown", "confidence": 0.0, "bbox": None}]
 
-    # 3) save detection image (YOLO-plotted)
+    # save yolo render
     save_dir = Path("runs/detect")
     save_dir.mkdir(parents=True, exist_ok=True)
-    out_path = save_dir / "tmp_detected.jpg"
-    results[0].plot(save=True, filename=str(out_path))
+    det_img_path = save_dir / "tmp_detected.jpg"
+    res0.plot(save=True, filename=str(det_img_path))
 
-    # 4) make an XAI overlay from detections 👇 (this is the change)
-    xai_path = Path("runs/detect/tmp_xai.jpg")
-    make_xai_overlay(image_path, detections, xai_path)
+    # real-ish gradcam (Tier 3)
+    xai_path = save_dir / "tmp_xai.jpg"
+    try:
+        make_gradcam(model, image_path, str(xai_path))
+    except Exception:
+        # fallback: copy original if cam fails
+        img = cv2.imread(image_path)
+        cv2.imwrite(str(xai_path), img)
 
-    # 5) normalize detections before returning
-    detections = normalize_detections(detections)
-    
-    return detections, out_path, xai_path
+    return detections, det_img_path, xai_path
