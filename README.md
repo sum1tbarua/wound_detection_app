@@ -26,7 +26,7 @@ This ensures safer, explainable, and human-in-the-loop decision support
 ## ⚙️ Key Features
 ### 🔍 **Multimodal Wound Analysis**
 - **YOLOv11-Segmentation**: Real-time wound detection and classification across four categories (`wound_cut`, `wound_burn`, `healthy_skin`, `wound_unknown`)
-- **ResNet-50 Body Classification**: Anatomical region prediction (arm, hand, leg, other) with Grad-CAM interpretability
+- **ResNet-50 Body Classification**: Anatomical region prediction (`arm`, `hand`, `leg`, `other`) with Grad-CAM interpretability
 - **Custom Datasets**: 2,135 wound images + 2,112 body location images with manual annotations
 
 ### 🛡️ **Safety-Aware LLM Integration**
