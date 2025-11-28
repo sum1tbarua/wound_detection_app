@@ -262,9 +262,9 @@ You’ll see:
 
 ## 📜 License
 
-<p align="center">
+<h3 align="center">
 This project is for academic and research purposes only.
-</p>
+</h3>
 <p align="center">
 ©2025 Sumit Barua and Ruth Bahre. All rights reserved.
 </p>
