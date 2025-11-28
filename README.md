@@ -12,11 +12,12 @@ This ensures safer, explainable, and human-in-the-loop decision support
 
 ## 🖼 Demo
 
-<p align="center">
+<!-- <p align="center">
   <img src="assets/ui_1.png" height="400px" width="350px" style="display: inline-block;">
   <img src="assets/ui_2.png" height="400px" 
   width="350px" style="display: inline-block;">
-</p>
+</p> -->
+![Streamlit Interface Demo](assets/application_demo.gif)
 
 <sub>Full interface showing detection, explainability (Grad-CAM), and LLM-based first-aid generation.</sub>
 
