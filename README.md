@@ -1,5 +1,4 @@
-# 🩹 Hybrid AI System for Wound Detection & Explainable First-Aid Recommendations
-### An Explainable Hybrid Computer Vision and Generative AI Framework
+# 🩹 Explainable Hybrid Multimodal Framework for Remote Wound Detection and First-Aid Recommendation
 
 ---
 
