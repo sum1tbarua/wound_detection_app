@@ -251,17 +251,20 @@ You’ll see:
 
 ## 👨‍💻 Author(s)
 
- - Sumit Barua,
- Master’s Student, Department of Computer Science, 
+ - Sumit Barua
+ Graduate Student, Department of Computer Science, 
  Western Michigan University, 📧 sumit.barua@wmich.edu
 
  - Ruth Bahre,
- Master’s Student, Department of Electrical and Computer Engineering, 
+ Graduate Student, Department of Electrical and Computer Engineering, 
  Western Michigan University, 📧 ruth.bahre@wmich.edu
 
 
 ## 📜 License
 
+<p align="center">
 This project is for academic and research purposes only.
-
-© 2025 Sumit and Ruth. All rights reserved.
+</p>
+<p align="center">
+©2025 Sumit Barua and Ruth Bahre. All rights reserved.
+</p>
