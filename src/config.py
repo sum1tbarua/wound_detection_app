@@ -13,6 +13,7 @@ Central configuration for the project.
 # Points to the trained segmentation model in the models/ folder.
 YOLO_MODEL_PATH = "models/wound_yolo_seg_final.pt"
 
+
 # Minimum confidence threshold for displaying detections
 DETECTION_CONF_THRESHOLD = 0.35
 

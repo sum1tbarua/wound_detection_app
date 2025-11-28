@@ -4,7 +4,7 @@
 ---
 
 ## 🧭 Overview
-This project is a hybrid AI application that integrates Computer Vision **YOLOv8 Segmentation** and a local Generative Language Model **Mistral via Ollama** to automate wound detection and generate context-aware first-aid recommendations.
+This project implements an **explainable hybrid multimodal AI framework** that integrates computer vision with large language models (LLMs) for automated wound assessment and transparent first-aid guidance. The system combines **YOLOv11 segmentation** for wound localization and **ResNet-50** for anatomical context understanding, enhanced with **dual-stage explainability** through Grad-CAM visualizations and LLM-generated natural language rationales.
 
 When the model is uncertain about a wound’s type or body location, it triggers an interactive clarification step—asking the user for more input before providing instructions.
 This ensures safer, explainable, and human-in-the-loop decision support
@@ -14,7 +14,9 @@ This ensures safer, explainable, and human-in-the-loop decision support
 ## 🖼 Demo
 
 <p align="center">
-  <img src="assets/ui.png" width="90%">
+  <img src="assets/ui_1.png" height="400px" width="350px" style="display: inline-block;">
+  <img src="assets/ui_2.png" height="400px" 
+  width="350px" style="display: inline-block;">
 </p>
 
 <sub>Full interface showing detection, explainability (Grad-CAM), and LLM-based first-aid generation.</sub>
@@ -22,40 +24,57 @@ This ensures safer, explainable, and human-in-the-loop decision support
 ---
 
 ## ⚙️ Key Features
-- 🧠 **Hybrid Vision + Language System**
+### 🔍 **Multimodal Wound Analysis**
+- **YOLOv11-Segmentation**: Real-time wound detection and classification across four categories (`wound_cut`, `wound_burn`, `healthy_skin`, `wound_unknown`)
+- **ResNet-50 Body Classification**: Anatomical region prediction (arm, hand, leg, other) with Grad-CAM interpretability
+- **Custom Datasets**: 2,135 wound images + 2,112 body location images with manual annotations
 
-    Combines YOLOv8 segmentation with a local LLM for contextual response generation.
-- 💬 **LLM-powered contextual first-aid generation**
+### 🛡️ **Safety-Aware LLM Integration**
+- **Mistral-7B (Local)**: Privacy-preserving, offline-first first-aid generation via Ollama
+- **Confidence-Aware Routing**: Automatic clarification mode triggered when:
+  - Wound class = `wound_unknown`
+  - Confidence scores < 0.70 threshold
+  - Body region = `other` category
+- **Structured Prompting**: Incorporates vision outputs, Grad-CAM cues, and explicit safety constraints
 
-    Generates Markdown-formatted medical guidance dynamically (no hardcoded text).
-- 🔍 Explainable AI (XAI / Grad-CAM)
+### 📊 **Dual-Stage Explainability**
+- **Vision-XAI**: Grad-CAM heatmaps for spatial interpretability of body region predictions
+- **LLM-XAI**: Natural language rationales explaining recommendation logic based on wound characteristics and anatomical context
+- **Token-level Attribution**: Highlights key factors influencing first-aid decisions
 
-    Displays heatmaps showing where the vision model focused when detecting wounds.
-
-- 🔍 **Uncertainty handling**  
-
-  Uses wound_unknown class — triggers interactive clarification when confidence is low.
-
-- 🖼️ **Streamlit Web Interface** 
-
-    Simple, interactive demo for uploading images and viewing multi-modal outputs.
-
-- 🧩 **Clean Modular Codebase** 
-    Organized, research-friendly, and ready for extension or publication.
+### 🌐 **Deployment-Ready Architecture**
+- **Streamlit Interface**: Real-time web application for image upload and analysis
+- **Offline Operation**: Complete local processing for privacy and resource-constrained environments
 ---
 
 ## 🧬 System Architecture
+
+1. **Image Input** → User uploads wound image via web interface
+2. **Vision Processing** → YOLOv11 segmentation + ResNet-50 body classification
+3. **Confidence Evaluation** → Uncertainty detection and routing logic
+4. **Interactive Clarification** → User input requested for ambiguous cases
+5. **LLM Inference** → Mistral-7B generates first-aid recommendations
+6. **Explainability Generation** → LLM-XAI produces human-readable rationales
+7. **Output Delivery** → Structured first-aid guidance with transparency reports
+
 ```brew
-[ Uploaded Image ]
-        ↓
-YOLOv8 Segmentation → Detected Classes → XAI Heatmap
-        ↓
-Structured Detections (JSON)
-        ↓
-LLM (Ollama Mistral)
-        ↓
-Generated Context-Aware First-Aid Instructions
+Vision Input
+↓
+YOLOv11-Segmentation (Wound Detection)
+↓
+ResNet-50 + Grad-CAM (Body Location)
+↓
+Confidence-Aware Routing
+↓
+Clarification Mode (if uncertain)
+↓
+Structured Prompt Construction
+↓
+Mistral-7B + LLM-XAI
+↓
+First-Aid Recommendations + Rationales
 ```
+
 
 ## 📁 Project Structure
 ```bash
@@ -146,7 +165,7 @@ OLLAMA_MODEL=mistral
 ```
 ---
 ## Model Setup
-No external downloads required — the trained YOLOv8 segmentation model (`models/wound_yolo_seg_final.pt`, 24 MB) is included in this repository for reproducibility.
+No external downloads required — the trained YOLOv11 segmentation model (`models/yolo_best.pt`, 24 MB) is included in this repository for reproducibility.
 
 ---
 ## ▶️ Run the App
